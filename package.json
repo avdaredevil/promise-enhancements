@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Enhances the prototype of promises to include more robust functionality",
   "main": "enhancement.js",
+  "types": "enhancement.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/avdaredevil/promise-enhancements.git"

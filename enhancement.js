@@ -17,7 +17,7 @@ const sleep = t => new Promise(res => setTimeout(res, t))
  * @param {any} ret What should be the output of this promise chain
  * @return {Promise}
  */
-Promise.prototype.return = function(ret) {return this.then(_ => ret)}
+Promise.prototype.return = Promise.prototype.returns = function(ret) {return this.then(_ => ret)}
 
 /**
  * Delay the next step of the promise chain by time specified
@@ -153,3 +153,4 @@ Promise.firstSuccess = arr => {
 process.on('unhandledRejection', console.log)
 
 module.exports = Promise
+module.exports.sleep = sleep

@@ -1,6 +1,13 @@
-## Promise-Enhancements
+# Promise-Enhancements
 This library enhances the `Promise` base class by adding many various additional functions: (with examples)
 
+## Installation
+Standard npm install:
+```shell
+npm install promise-enhancements
+```
+
+## API
 ### Static functions
 - `Promise.retry(fn, options)`: 
     > Retry function for repeated validation on Promise
@@ -40,12 +47,12 @@ This library enhances the `Promise` base class by adding many various additional
     ```
 
 ### Dynamic functions
-- `<promise>.return(value)`: 
+- `<promise>.returns(value)`: 
     > Uses the value provided as the argument as the seed for the next step
     ```js
     Promise.resolve(1)
         .then(add1)
-        .return(0)
+        .returns(0)
         .then(add1) // = await add1(0) = 1
     // While all steps in the chain ran, the next element after return uses the new value
     ```
@@ -86,4 +93,3 @@ This library enhances the `Promise` base class by adding many various additional
 
     // Restart('jon'), if success only then restart('ally'), etc
     ```
--
