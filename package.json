@@ -1,0 +1,25 @@
+{
+  "name": "promise-enhancements",
+  "version": "1.0.0",
+  "description": "Enhances the prototype of promises to include more robust functionality",
+  "main": "enhancement.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avdaredevil/promise-enhancements.git"
+  },
+  "keywords": [
+    "Promise",
+    "node",
+    "js",
+    "javascript",
+    "enhancement",
+    "retry",
+    "map"
+  ],
+  "author": "Apoorv Verma [AP] <avdaredevil@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/avdaredevil/promise-enhancements/issues"
+  },
+  "homepage": "https://github.com/avdaredevil/promise-enhancements#readme"
+}
