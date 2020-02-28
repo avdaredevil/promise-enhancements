@@ -13,7 +13,7 @@
 export function sleep(t: number): Promise<void>
 
 export type Callback<T> = (elem: T) => any;
-export type Callback<T, J> = (elem: T) => J;
+export type Callback<T, J> = (elem: T) => J | PromiseLike<J>;
 export type LinePrinter<T> = (output: T) => T;
 export type PrintAdapter = typeof console.log;
 export type RetryOptions = {times: 1, delay: 500, printErrors: false, errorPrefix: ''};
@@ -51,7 +51,7 @@ declare global {
 
         /**
          * Runs the following callback on each element asynchrounously, but in sequence.
-         * Unline `Promise.sync` all callback executions will get the input value from the previous value in the chain
+         * Unlike `Promise.sync` all callback executions will get the input value from the previous value in the chain
          * Example:
          * ```js
          * await cb(input[0]) -> await cb(input[1]) -> ... -> await cb(input[n])
@@ -60,7 +60,7 @@ declare global {
          * @param {function} callback The promise callback
          * @return {Promise}
          */
-        sync<J>(callback: Callback<T, J>): Promise<J[]>;
+        sync<J>(callback: (elem: T, index: number, lastResult: J) => J | PromiseLike<J>): Promise<J[]>;
 
         /**
          * Retry the current step in the promise chain till success or exausted retries
@@ -73,7 +73,7 @@ declare global {
          * @param {RetryOptions} options Options to run this retry with
          * @return {Promise}
          */
-        retry<J>(callback: (input: T, remainingAttempts: number) => J, options: RetryOptions = {}): Promise<J>;
+        retry<J>(callback: (input: T, remainingAttempts: number) => J | PromiseLike<J>, options: RetryOptions = {}): Promise<J>;
 
         /**
          * Runs an array of async functions in sequence (where the output of the previous callback is the input for the next)
@@ -83,9 +83,10 @@ declare global {
          * ```
          * 
          * @param {function[]} tasks Array of tasks
+         * @param {any} seedValue What should the first task callback recieve as a value
          * @return {Promise<T[]>}
          */
-        static sync(tasks: function | any): Promise<any[]>;
+        static sync(tasks: (lastResult: typeof seedValue | any, index: number) => any, seedValue?: any): Promise<any[]>;
 
         /**
          * Retry function for repeated validation on Promise
