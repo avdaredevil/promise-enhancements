@@ -88,7 +88,7 @@ Promise.prototype.sync = function(callback) {
  */
 Promise.prototype.retry = function(callback, options = {}) {
     return this.then(val => {
-        return Promise.retry(_ => callback(val), options)
+        return Promise.retry(remainingAttempts => callback(val, remainingAttempts), options)
     })
 }
 
@@ -123,7 +123,7 @@ Promise.retry = async (fn, options, _collectedErrors = []) => {
     const {times=1, delay=500, printErrors=false, errorPrefix = ''} = options
     if (times <= 0) throw Error(`${errorPrefix}Exhausted retry loops:\n${_collectedErrors.join('\n')}`)
     try {
-        const out = await fn()
+        const out = await fn(times)
         return out
     } catch(e) {
         if (printErrors) console.error(`${errorPrefix}Retry loop failed:`, e)

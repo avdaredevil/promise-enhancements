@@ -12,34 +12,34 @@
  */
 export function sleep(t: number): Promise<void>
 
-export type Callback = (elem: any, i?: index) => any;
-export type LinePrinter = (output: any) => any;
+export type Callback<T> = (elem: T) => any;
+export type Callback<T, J> = (elem: T) => J;
+export type LinePrinter<T> = (output: T) => T;
 export type PrintAdapter = typeof console.log;
 export type RetryOptions = {times: 1, delay: 500, printErrors: false, errorPrefix: ''};
 
 declare global {
-
-    module Promise {
+    interface Promise<T> {
         /**
          * Uses the value provided as the argument as the seed for the next step
          * @param {any} ret What should be the output of this promise chain
          * @return {Promise}
          */
-        function returns<T>(ret: T): Promise<T>;
+        returns<J>(ret: J): Promise<J>;
 
         /**
          * Delay the next step of the promise chain by time specified
          * @param {Number} time What should be the output of this promise chain
          * @return {Promise} With value from last execution
          */
-        function sleep(time: Number): Promise<any>;
+        sleep(time: Number): Promise<T>;
 
         /**
          * Convenience function provided when the output from the last promise returns an array
          * @param {function} callback Use like you would `.then()` assuming input is one of the elements
          * @return {Promise}
          */
-        function map<T>(callback: (elem: any) => T): Promise<T>[];
+        map<J>(callback: Callback<T, J>): Promise<J>[];
 
         /**
          * Output printing function between chains that does not modify the value being passed along the promise chain
@@ -47,7 +47,7 @@ declare global {
          * @param {function} printer Function to use to print, uses the function provided OR `Promise.printer()` (if defined) OR `console.log()`
          * @return {Promise} With value from last promise execution
          */
-        function print(str: string | LinePrinter, printer?: PrintAdapter): Promise<any>;
+        print(str: string | LinePrinter<T>, printer?: PrintAdapter): Promise<any>;
 
         /**
          * Runs the following callback on each element asynchrounously, but in sequence.
@@ -60,7 +60,7 @@ declare global {
          * @param {function} callback The promise callback
          * @return {Promise}
          */
-        function sync<T>(callback: (elem: any) => T): Promise<T[]>;
+        sync<J>(callback: Callback<T, J>): Promise<J[]>;
 
         /**
          * Retry the current step in the promise chain till success or exausted retries
@@ -73,7 +73,7 @@ declare global {
          * @param {RetryOptions} options Options to run this retry with
          * @return {Promise}
          */
-        function retry<T>(callback: (elem: any) => T, options: RetryOptions = {}): Promise<T>;
+        retry<J>(callback: (input: T, remainingAttempts: number) => J, options: RetryOptions = {}): Promise<J>;
 
         /**
          * Runs an array of async functions in sequence (where the output of the previous callback is the input for the next)
@@ -83,9 +83,9 @@ declare global {
          * ```
          * 
          * @param {function[]} tasks Array of tasks
-         * @return {Promise<any[]>}
+         * @return {Promise<T[]>}
          */
-        static function sync(tasks: function | any): Promise<any[]>;
+        static sync(tasks: function | any): Promise<any[]>;
 
         /**
          * Retry function for repeated validation on Promise
@@ -93,19 +93,22 @@ declare global {
          * @param {RetryOptions} options Options to run this retry with
          * @return {Promise}
          */
-        static function retry<T>(
-            fn: (e: any, attempt?: number) => T,
+        static retry<J>(
+            fn: (attempt?: number) => J,
             options: RetryOptions,
             _collectedErrors: Error[],
-        ): Promise<T>;
+        ): Promise<J>;
 
         /**
          * Like `Promise.map`, but will yield at the first success. It will fail if all cases are rejections
          * @param {function[]} arr Array of functions to run
          * @return {Promise}
          */
-        static function firstSuccess(arr: any): any;
+        static firstSuccess(arr: any): any;
+    }
+    interface PromiseConstructor {
+        new <T>(callback: (resolve: (thenableOrResult?: T | PromiseLike<T>) => void, reject: (error?: any) => void, onCancel?: (callback: () => void) => void) => void): Promise<T>; 
     }
 }
 
-export default Promise
+export as namespace Promise
