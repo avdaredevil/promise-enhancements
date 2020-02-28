@@ -12,8 +12,7 @@
  */
 export function sleep(t: number): Promise<void>
 
-export type Callback<T> = (elem: T) => any;
-export type Callback<T, J> = (elem: T) => J | PromiseLike<J>;
+export type KnownCallback<T, J> = (elem: T) => J | PromiseLike<J>;
 export type LinePrinter<T> = (output: T) => T;
 export type PrintAdapter = typeof console.log;
 export type RetryOptions = {times: 1, delay: 500, printErrors: false, errorPrefix: ''};
@@ -39,7 +38,7 @@ declare global {
          * @param {function} callback Use like you would `.then()` assuming input is one of the elements
          * @return {Promise}
          */
-        map<J>(callback: Callback<T, J>): Promise<J>[];
+        map<J>(callback: KnownCallback<T, J>): Promise<J>[];
 
         /**
          * Output printing function between chains that does not modify the value being passed along the promise chain
@@ -73,7 +72,10 @@ declare global {
          * @param {RetryOptions} options Options to run this retry with
          * @return {Promise}
          */
-        retry<J>(callback: (input: T, remainingAttempts: number) => J | PromiseLike<J>, options: RetryOptions = {}): Promise<J>;
+        retry<J>(callback: (input: T, remainingAttempts: number) => J | PromiseLike<J>, options: RetryOptions): Promise<J>;
+    }
+    interface PromiseConstructor {
+        new <T>(callback: (resolve: (thenableOrResult?: T | PromiseLike<T>) => void, reject: (error?: any) => void, onCancel?: (callback: () => void) => void) => void): Promise<T>;
 
         /**
          * Runs an array of async functions in sequence (where the output of the previous callback is the input for the next)
@@ -86,7 +88,7 @@ declare global {
          * @param {any} seedValue What should the first task callback recieve as a value
          * @return {Promise<T[]>}
          */
-        static sync(tasks: (lastResult: typeof seedValue | any, index: number) => any, seedValue?: any): Promise<any[]>;
+        sync(tasks: (lastResult: typeof seedValue | any, index: number) => any | PromiseLike<any>, seedValue?: any): Promise<any[]>;
 
         /**
          * Retry function for repeated validation on Promise
@@ -94,8 +96,8 @@ declare global {
          * @param {RetryOptions} options Options to run this retry with
          * @return {Promise}
          */
-        static retry<J>(
-            fn: (attempt?: number) => J,
+        retry<J>(
+            fn: (attempt?: number) => J | PromiseLike<J>,
             options: RetryOptions,
             _collectedErrors: Error[],
         ): Promise<J>;
@@ -105,10 +107,7 @@ declare global {
          * @param {function[]} arr Array of functions to run
          * @return {Promise}
          */
-        static firstSuccess(arr: any): any;
-    }
-    interface PromiseConstructor {
-        new <T>(callback: (resolve: (thenableOrResult?: T | PromiseLike<T>) => void, reject: (error?: any) => void, onCancel?: (callback: () => void) => void) => void): Promise<T>; 
+        firstSuccess(arr: any): any;
     }
 }
 
