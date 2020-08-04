@@ -38,7 +38,7 @@ declare global {
          * @param {function} callback Use like you would `.then()` assuming input is one of the elements
          * @return {Promise}
          */
-        map<J>(callback: KnownCallback<T, J>): Promise<J[]>;
+        map<J>(callback: KnownCallback<T extends Array<any> ? T[0] : never, J>): Promise<J[]>;
 
         /**
          * Output printing function between chains that does not modify the value being passed along the promise chain
