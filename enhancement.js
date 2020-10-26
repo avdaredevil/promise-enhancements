@@ -84,7 +84,7 @@ Promise.firstSuccess = arr => {
 }
 
 // If an unhandled Rejection Occurs, someone messed up their code, so let's fix it
-process.on('unhandledRejection', console.log)
+typeof process != 'undefined' && process.on('unhandledRejection', console.log)
 
 module.exports = Promise
 module.exports.sleep = sleep
