@@ -15,7 +15,16 @@ export function sleep(t: number): Promise<void>
 export type KnownCallback<T, J> = (elem: T) => J | PromiseLike<J>;
 export type LinePrinter<T> = (output: T) => T;
 export type PrintAdapter = typeof console.log;
-export type RetryOptions = {times: 1, delay: 500, printErrors: false, errorPrefix: ''};
+export interface RetryOptions {
+    /** How many times to retry the function (default: `1`) */
+    times: number
+    /** The time to wait in ms between each retry (default: `500`) */
+    delay: number
+    /** Should errors print on every failed loop (default: `false`) */
+    printErrors: boolean
+    /** What should error messages be prepended with, this adds context to the errors (default: `''`) */
+    errorPrefix: string
+}
 
 declare global {
     interface Promise<T> {
@@ -99,7 +108,6 @@ declare global {
         retry<J>(
             fn: (attempt?: number) => J | PromiseLike<J>,
             options: RetryOptions,
-            _collectedErrors: Error[],
         ): Promise<J>;
 
         /**
