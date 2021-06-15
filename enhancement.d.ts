@@ -78,10 +78,10 @@ declare global {
          * ```
          * 
          * @param {function} callback The promise callback
-         * @param {RetryOptions} options Options to run this retry with
+         * @param {Partial<RetryOptions>} options Options to run this retry with
          * @return {Promise}
          */
-        retry<J>(callback: (input: T, remainingAttempts: number) => J | PromiseLike<J>, options: RetryOptions): Promise<J>;
+        retry<J>(callback: (input: T, remainingAttempts: number) => J | PromiseLike<J>, options: Partial<RetryOptions>): Promise<J>;
     }
     interface PromiseConstructor {
         new <T>(callback: (resolve: (thenableOrResult?: T | PromiseLike<T>) => void, reject: (error?: any) => void, onCancel?: (callback: () => void) => void) => void): Promise<T>;
@@ -102,12 +102,12 @@ declare global {
         /**
          * Retry function for repeated validation on Promise
          * @param {function} fn Simple async / sync function to run
-         * @param {RetryOptions} options Options to run this retry with
+         * @param {Partial<RetryOptions>} options Options to run this retry with
          * @return {Promise}
          */
         retry<J>(
             fn: (attempt?: number) => J | PromiseLike<J>,
-            options: RetryOptions,
+            options: Partial<RetryOptions>,
         ): Promise<J>;
 
         /**

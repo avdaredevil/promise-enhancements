@@ -1,6 +1,6 @@
 {
   "name": "promise-enhancements",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Enhances the prototype of promises to include more robust functionality",
   "main": "enhancement.js",
   "types": "enhancement.d.ts",
